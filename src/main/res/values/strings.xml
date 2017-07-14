@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">BluetoothGATT</string>
+    <string name="scanbutton_text">Scan</string>
+    <string name="stopbutton_text">Stop</string>
+    <string name="unknown_device">Unknown Device</string>
+    <string name="device_name">Device Name:</string>
+    <string name="device_address">Device Address:</string>
+</resources>
