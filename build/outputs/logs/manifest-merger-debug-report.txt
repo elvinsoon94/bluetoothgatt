@@ -1,0 +1,115 @@
+-- Merging decision tree log ---
+manifest
+ADDED from C:\Users\nkwm87\AndroidStudioProjects\BluetoothGATT\app\src\main\AndroidManifest.xml:2:1-32:12
+	package
+		ADDED from C:\Users\nkwm87\AndroidStudioProjects\BluetoothGATT\app\src\main\AndroidManifest.xml:3:5-47
+		INJECTED from C:\Users\nkwm87\AndroidStudioProjects\BluetoothGATT\app\src\main\AndroidManifest.xml
+		INJECTED from C:\Users\nkwm87\AndroidStudioProjects\BluetoothGATT\app\src\main\AndroidManifest.xml
+	android:versionName
+		INJECTED from C:\Users\nkwm87\AndroidStudioProjects\BluetoothGATT\app\src\main\AndroidManifest.xml
+		INJECTED from C:\Users\nkwm87\AndroidStudioProjects\BluetoothGATT\app\src\main\AndroidManifest.xml
+	xmlns:android
+		ADDED from C:\Users\nkwm87\AndroidStudioProjects\BluetoothGATT\app\src\main\AndroidManifest.xml:2:11-69
+	android:versionCode
+		INJECTED from C:\Users\nkwm87\AndroidStudioProjects\BluetoothGATT\app\src\main\AndroidManifest.xml
+		INJECTED from C:\Users\nkwm87\AndroidStudioProjects\BluetoothGATT\app\src\main\AndroidManifest.xml
+uses-permission#android.permission.ACCESS_FINE_LOCATION
+ADDED from C:\Users\nkwm87\AndroidStudioProjects\BluetoothGATT\app\src\main\AndroidManifest.xml:5:5-79
+	android:name
+		ADDED from C:\Users\nkwm87\AndroidStudioProjects\BluetoothGATT\app\src\main\AndroidManifest.xml:5:22-76
+uses-permission#android.permission.ACCESS_COARSE_LOCATION
+ADDED from C:\Users\nkwm87\AndroidStudioProjects\BluetoothGATT\app\src\main\AndroidManifest.xml:6:5-80
+	android:name
+		ADDED from C:\Users\nkwm87\AndroidStudioProjects\BluetoothGATT\app\src\main\AndroidManifest.xml:6:22-78
+uses-permission#android.permission.BLUETOOTH_ADMIN
+ADDED from C:\Users\nkwm87\AndroidStudioProjects\BluetoothGATT\app\src\main\AndroidManifest.xml:7:5-74
+	android:name
+		ADDED from C:\Users\nkwm87\AndroidStudioProjects\BluetoothGATT\app\src\main\AndroidManifest.xml:7:22-71
+uses-permission#android.permission.BLUETOOTH
+ADDED from C:\Users\nkwm87\AndroidStudioProjects\BluetoothGATT\app\src\main\AndroidManifest.xml:8:5-68
+	android:name
+		ADDED from C:\Users\nkwm87\AndroidStudioProjects\BluetoothGATT\app\src\main\AndroidManifest.xml:8:22-65
+application
+ADDED from C:\Users\nkwm87\AndroidStudioProjects\BluetoothGATT\app\src\main\AndroidManifest.xml:10:5-30:19
+MERGED from [com.android.support:appcompat-v7:25.3.1] C:\Users\nkwm87\.android\build-cache\b844ce7a352f40a7b0a886cf4c4e6a78337efb95\output\AndroidManifest.xml:29:5-20
+MERGED from [com.android.support:animated-vector-drawable:25.3.1] C:\Users\nkwm87\.android\build-cache\ab60de94bbaf6d847475e611cbc76f5306f4ce97\output\AndroidManifest.xml:26:5-20
+MERGED from [com.android.support:support-vector-drawable:25.3.1] C:\Users\nkwm87\.android\build-cache\834fd178e0b65becd276fde0c2f1b9ab70842af5\output\AndroidManifest.xml:26:5-20
+MERGED from [com.android.support.constraint:constraint-layout:1.0.2] C:\Users\nkwm87\.android\build-cache\c5877a04cbcdf047d1d39c05ead01dc34dc76315\output\AndroidManifest.xml:9:5-20
+MERGED from [com.android.support:support-v4:25.3.1] C:\Users\nkwm87\.android\build-cache\58bcb966109a61ea588ceed0db3556e8eec52184\output\AndroidManifest.xml:29:5-20
+MERGED from [com.android.support:support-fragment:25.3.1] C:\Users\nkwm87\.android\build-cache\5af27f399eedb23aea67046518331c271449577a\output\AndroidManifest.xml:29:5-20
+MERGED from [com.android.support:support-media-compat:25.3.1] C:\Users\nkwm87\.android\build-cache\c4cfa50e160578d2312f940f79ea3201ec5c4dda\output\AndroidManifest.xml:29:5-20
+MERGED from [com.android.support:support-core-utils:25.3.1] C:\Users\nkwm87\.android\build-cache\3e5eb046de1b8f56e83ec731bce41a0c374ec4fb\output\AndroidManifest.xml:29:5-20
+MERGED from [com.android.support:support-core-ui:25.3.1] C:\Users\nkwm87\.android\build-cache\dd9ce874d4899228d66ac1c10622aefa34782306\output\AndroidManifest.xml:29:5-20
+MERGED from [com.android.support:support-compat:25.3.1] C:\Users\nkwm87\.android\build-cache\dcf5dd46d2dfca8dd4e42832ad374bceb83dfe19\output\AndroidManifest.xml:29:5-20
+	android:label
+		ADDED from C:\Users\nkwm87\AndroidStudioProjects\BluetoothGATT\app\src\main\AndroidManifest.xml:13:9-41
+	android:supportsRtl
+		ADDED from C:\Users\nkwm87\AndroidStudioProjects\BluetoothGATT\app\src\main\AndroidManifest.xml:15:9-35
+	android:roundIcon
+		ADDED from C:\Users\nkwm87\AndroidStudioProjects\BluetoothGATT\app\src\main\AndroidManifest.xml:14:9-54
+	android:allowBackup
+		ADDED from C:\Users\nkwm87\AndroidStudioProjects\BluetoothGATT\app\src\main\AndroidManifest.xml:11:9-35
+	android:icon
+		ADDED from C:\Users\nkwm87\AndroidStudioProjects\BluetoothGATT\app\src\main\AndroidManifest.xml:12:9-43
+	android:theme
+		ADDED from C:\Users\nkwm87\AndroidStudioProjects\BluetoothGATT\app\src\main\AndroidManifest.xml:16:9-40
+activity#com.example.nkwm87.bluetoothgatt.MainActivity
+ADDED from C:\Users\nkwm87\AndroidStudioProjects\BluetoothGATT\app\src\main\AndroidManifest.xml:17:9-23:20
+	android:name
+		ADDED from C:\Users\nkwm87\AndroidStudioProjects\BluetoothGATT\app\src\main\AndroidManifest.xml:17:19-47
+intent-filter#android.intent.action.MAIN+android.intent.category.LAUNCHER
+ADDED from C:\Users\nkwm87\AndroidStudioProjects\BluetoothGATT\app\src\main\AndroidManifest.xml:18:13-22:29
+action#android.intent.action.MAIN
+ADDED from C:\Users\nkwm87\AndroidStudioProjects\BluetoothGATT\app\src\main\AndroidManifest.xml:19:17-69
+	android:name
+		ADDED from C:\Users\nkwm87\AndroidStudioProjects\BluetoothGATT\app\src\main\AndroidManifest.xml:19:25-66
+category#android.intent.category.LAUNCHER
+ADDED from C:\Users\nkwm87\AndroidStudioProjects\BluetoothGATT\app\src\main\AndroidManifest.xml:21:17-77
+	android:name
+		ADDED from C:\Users\nkwm87\AndroidStudioProjects\BluetoothGATT\app\src\main\AndroidManifest.xml:21:27-74
+service#com.example.nkwm87.bluetoothgatt.BluetoothLeService
+ADDED from C:\Users\nkwm87\AndroidStudioProjects\BluetoothGATT\app\src\main\AndroidManifest.xml:25:9-27:38
+	android:enabled
+		ADDED from C:\Users\nkwm87\AndroidStudioProjects\BluetoothGATT\app\src\main\AndroidManifest.xml:27:13-35
+	android:name
+		ADDED from C:\Users\nkwm87\AndroidStudioProjects\BluetoothGATT\app\src\main\AndroidManifest.xml:26:13-47
+activity#com.example.nkwm87.bluetoothgatt.DeviceControlActivity
+ADDED from C:\Users\nkwm87\AndroidStudioProjects\BluetoothGATT\app\src\main\AndroidManifest.xml:29:9-68
+	android:name
+		ADDED from C:\Users\nkwm87\AndroidStudioProjects\BluetoothGATT\app\src\main\AndroidManifest.xml:29:19-56
+uses-sdk
+INJECTED from C:\Users\nkwm87\AndroidStudioProjects\BluetoothGATT\app\src\main\AndroidManifest.xml reason: use-sdk injection requested
+MERGED from [com.android.support:appcompat-v7:25.3.1] C:\Users\nkwm87\.android\build-cache\b844ce7a352f40a7b0a886cf4c4e6a78337efb95\output\AndroidManifest.xml:21:5-23:78
+MERGED from [com.android.support:animated-vector-drawable:25.3.1] C:\Users\nkwm87\.android\build-cache\ab60de94bbaf6d847475e611cbc76f5306f4ce97\output\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-vector-drawable:25.3.1] C:\Users\nkwm87\.android\build-cache\834fd178e0b65becd276fde0c2f1b9ab70842af5\output\AndroidManifest.xml:20:5-43
+MERGED from [com.android.support.constraint:constraint-layout:1.0.2] C:\Users\nkwm87\.android\build-cache\c5877a04cbcdf047d1d39c05ead01dc34dc76315\output\AndroidManifest.xml:5:5-7:41
+MERGED from [com.android.support:support-v4:25.3.1] C:\Users\nkwm87\.android\build-cache\58bcb966109a61ea588ceed0db3556e8eec52184\output\AndroidManifest.xml:21:5-23:54
+MERGED from [com.android.support:support-fragment:25.3.1] C:\Users\nkwm87\.android\build-cache\5af27f399eedb23aea67046518331c271449577a\output\AndroidManifest.xml:21:5-23:60
+MERGED from [com.android.support:support-media-compat:25.3.1] C:\Users\nkwm87\.android\build-cache\c4cfa50e160578d2312f940f79ea3201ec5c4dda\output\AndroidManifest.xml:21:5-23:63
+MERGED from [com.android.support:support-core-utils:25.3.1] C:\Users\nkwm87\.android\build-cache\3e5eb046de1b8f56e83ec731bce41a0c374ec4fb\output\AndroidManifest.xml:21:5-23:61
+MERGED from [com.android.support:recyclerview-v7:25.3.1] C:\Users\nkwm87\.android\build-cache\bd89c3978d27f1a45028657ef7d09b4cc837f390\output\AndroidManifest.xml:20:5-43
+MERGED from [com.android.support:support-core-ui:25.3.1] C:\Users\nkwm87\.android\build-cache\dd9ce874d4899228d66ac1c10622aefa34782306\output\AndroidManifest.xml:21:5-23:58
+MERGED from [com.android.support:support-compat:25.3.1] C:\Users\nkwm87\.android\build-cache\dcf5dd46d2dfca8dd4e42832ad374bceb83dfe19\output\AndroidManifest.xml:21:5-23:58
+	tools:overrideLibrary
+		ADDED from [com.android.support:appcompat-v7:25.3.1] C:\Users\nkwm87\.android\build-cache\b844ce7a352f40a7b0a886cf4c4e6a78337efb95\output\AndroidManifest.xml:23:9-75
+	android:targetSdkVersion
+		INJECTED from C:\Users\nkwm87\AndroidStudioProjects\BluetoothGATT\app\src\main\AndroidManifest.xml
+		INJECTED from C:\Users\nkwm87\AndroidStudioProjects\BluetoothGATT\app\src\main\AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from C:\Users\nkwm87\AndroidStudioProjects\BluetoothGATT\app\src\main\AndroidManifest.xml
+		INJECTED from C:\Users\nkwm87\AndroidStudioProjects\BluetoothGATT\app\src\main\AndroidManifest.xml
+meta-data#android.support.VERSION
+ADDED from [com.android.support:appcompat-v7:25.3.1] C:\Users\nkwm87\.android\build-cache\b844ce7a352f40a7b0a886cf4c4e6a78337efb95\output\AndroidManifest.xml:25:5-27:34
+MERGED from [com.android.support:animated-vector-drawable:25.3.1] C:\Users\nkwm87\.android\build-cache\ab60de94bbaf6d847475e611cbc76f5306f4ce97\output\AndroidManifest.xml:22:5-24:34
+MERGED from [com.android.support:support-vector-drawable:25.3.1] C:\Users\nkwm87\.android\build-cache\834fd178e0b65becd276fde0c2f1b9ab70842af5\output\AndroidManifest.xml:22:5-24:34
+MERGED from [com.android.support:support-v4:25.3.1] C:\Users\nkwm87\.android\build-cache\58bcb966109a61ea588ceed0db3556e8eec52184\output\AndroidManifest.xml:25:5-27:34
+MERGED from [com.android.support:support-fragment:25.3.1] C:\Users\nkwm87\.android\build-cache\5af27f399eedb23aea67046518331c271449577a\output\AndroidManifest.xml:25:5-27:34
+MERGED from [com.android.support:support-media-compat:25.3.1] C:\Users\nkwm87\.android\build-cache\c4cfa50e160578d2312f940f79ea3201ec5c4dda\output\AndroidManifest.xml:25:5-27:34
+MERGED from [com.android.support:support-core-utils:25.3.1] C:\Users\nkwm87\.android\build-cache\3e5eb046de1b8f56e83ec731bce41a0c374ec4fb\output\AndroidManifest.xml:25:5-27:34
+MERGED from [com.android.support:recyclerview-v7:25.3.1] C:\Users\nkwm87\.android\build-cache\bd89c3978d27f1a45028657ef7d09b4cc837f390\output\AndroidManifest.xml:22:5-24:34
+MERGED from [com.android.support:support-core-ui:25.3.1] C:\Users\nkwm87\.android\build-cache\dd9ce874d4899228d66ac1c10622aefa34782306\output\AndroidManifest.xml:25:5-27:34
+MERGED from [com.android.support:support-compat:25.3.1] C:\Users\nkwm87\.android\build-cache\dcf5dd46d2dfca8dd4e42832ad374bceb83dfe19\output\AndroidManifest.xml:25:5-27:34
+	android:value
+		ADDED from [com.android.support:appcompat-v7:25.3.1] C:\Users\nkwm87\.android\build-cache\b844ce7a352f40a7b0a886cf4c4e6a78337efb95\output\AndroidManifest.xml:27:9-31
+	android:name
+		ADDED from [com.android.support:appcompat-v7:25.3.1] C:\Users\nkwm87\.android\build-cache\b844ce7a352f40a7b0a886cf4c4e6a78337efb95\output\AndroidManifest.xml:26:9-47
