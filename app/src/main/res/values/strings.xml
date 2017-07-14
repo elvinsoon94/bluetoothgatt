@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">BluetoothGATT</string>
+    <string name="scanbutton_text">Scan</string>
+    <string name="stopbutton_text">Stop</string>
+    <string name="unknown_device">Unknown Device</string>
+    <string name="device_name">Device Name:</string>
+    <string name="device_address">Device Address:</string>
+
+    <string name="connected">Connected</string>
+    <string name="disconnected">Disconnected</string>
+    <string name="statusText">Status:</string>
+    <string name="no_data">No Data</string>
+    <string name="dataText">Data:</string>
+    <string name="disconnect_Text">Disconnect</string>
+    <string name="connect_Text">Connect</string>
+    <string name="unknown_service">Unknown Service</string>
+    <string name="unknown_characteristic">Unknown Characteristic</string>
+    <string name="show_text">Show</string>
+    <string name="device_uptime_text">Show Device Uptime</string>
+</resources>
