@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="false"
+        jar="C:\Users\nkwm87\.android\build-cache\bd89c3978d27f1a45028657ef7d09b4cc837f390\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.0"
+        sha1="95519720620b553f63afc789beba9ad582807f7c">
+        <dex dex="C:\Users\nkwm87\AndroidStudioProjects\BluetoothGATT\app\build\intermediates\pre-dexed\debug\classes_e788a7caa41d20ea633525b1eb8db28a6ca1c745.jar" />
+    </item>
+
+</items>
