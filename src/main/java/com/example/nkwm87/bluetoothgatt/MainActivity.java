@@ -2,6 +2,7 @@ package com.example.nkwm87.bluetoothgatt;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Service;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanResult;
@@ -11,8 +12,10 @@ import android.bluetooth.BluetoothManager;
 import android.content.DialogInterface;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -22,6 +25,7 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Button;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +36,12 @@ import static com.example.nkwm87.bluetoothgatt.R.id.devicename_list;
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class MainActivity extends AppCompatActivity {
 
+    private Handler mHandler;
+    private static final long SCAN_PERIOD = 10000;
+
     private static final int REQUEST_ENABLE_BT = 1;
+    private Button StartButton;
+    private Button StopButton;
     BluetoothLeService mBluetoothLeService;
     String TAG = "BluetoothActivity";
     BluetoothAdapter mBluetoothAdapter ;
@@ -53,7 +62,18 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "Started.");
         setContentView(R.layout.activity_main);
 
+        if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
+            Toast.makeText(this, "BLUETOOTH_LE not supported in this device!", Toast.LENGTH_SHORT).show();
+            finish();
+        }
+
         getBluetoothAndLeScanner();
+
+        if (mBluetoothAdapter == null) {
+            Toast.makeText(this, "Bluetooth Adapter is not Available", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
         Button ScanButton = (Button)findViewById(R.id.ScanButton);
         ScanButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,22 +83,42 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
         BLEListView = (ListView) findViewById(devicename_list);
         listBluetoothDevice = new ArrayList<>();
         adapterScanResult = new ArrayAdapter<BluetoothDevice>(this, android.R.layout.simple_list_item_1, listBluetoothDevice);
         BLEListView.setAdapter((adapterScanResult));
         BLEListView.setOnItemClickListener(scanDeviceOnItemClickListener);
 
+        mHandler = new Handler();
 
+        Button StartButton = (Button)findViewById(R.id.startbutton);
         Button StopButton = (Button)findViewById(R.id.StopButton);
+
+        StartButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "Becoming Client and Start Advertising");
+                startLeScan(false);
+                //BluetoothManager bluetoothManager = (BluetoothManager) MainActivity.this.getApplicationContext().getSystemService(Context.BLUETOOTH_SERVICE);
+                //BluetoothAdapter bluetoothAdapter = bluetoothManager.getAdapter();
+                start();
+            }
+        });
+
+
         StopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "Stop Scanning");
-                mBluetoothLeScanner.stopScan(mLeScanCallBack);
+                Log.d(TAG, "Stop Advertising Process");
+                startLeScan(false);
+                stopService(new Intent(MainActivity.this, GattClient.class));
             }
         });
+    }
+
+    /** The advertise process can be run but dunno why the MAC address of the advertised device keep changing **/
+    private void start(){
+        startService(new Intent(this, GattClient.class));
     }
 
     @Override
@@ -91,13 +131,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
             }
         }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mBluetoothLeScanner.stopScan(mLeScanCallBack);
-        adapterScanResultName.clear();
     }
 
     @Override
@@ -118,7 +151,20 @@ public class MainActivity extends AppCompatActivity {
 
     private void startLeScan(final boolean enable){
         if(enable){
+            listBluetoothDevice.clear();
+            BLEListView.invalidateViews();
+
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Log.d(TAG, "Scanning Process Timeout");
+                    mBluetoothLeScanner.stopScan(mLeScanCallBack);
+                    BLEListView.invalidateViews();
+                }
+            }, SCAN_PERIOD);
+
             mBluetoothLeScanner.startScan(mLeScanCallBack);
+            Log.d(TAG, "Scanning in Progree");
         }else{
             mBluetoothLeScanner.stopScan(mLeScanCallBack);
         }
@@ -142,6 +188,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onScanFailed(int errorCode) {
+            Log.d(TAG, "Scanning Failed");
             super.onScanFailed(errorCode);
         }
 
@@ -153,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-        private void addDeviceName (BluetoothDevice device){
+        /*private void addDeviceName (BluetoothDevice device){
             if (!listBluetoothDevice.contains(device)) {
                 Log.d(TAG, "Displaying the Device Name");
                 String deviceName = device.getName();
@@ -166,7 +213,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 BLENameListView.invalidateViews();
             }
-        }
+        }*/
     };
 
     AdapterView.OnItemClickListener scanDeviceOnItemClickListener = new AdapterView.OnItemClickListener(){
@@ -184,6 +231,7 @@ public class MainActivity extends AppCompatActivity {
                     intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_NAME, device.getName());
                     intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS, device.getAddress());
                     startActivity(intent);
+                    Log.d(TAG, "Connecting to " + device.getName());
                 }
             }).show();
         }

@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
@@ -15,6 +16,8 @@ import android.os.Binder;
 import android.os.IBinder;
 
 import java.util.List;
+import java.util.UUID;
+
 import android.util.Log;
 
 public class BluetoothLeService extends Service {
@@ -37,6 +40,9 @@ public class BluetoothLeService extends Service {
     public final static String ACTION_DATA_AVAILABLE = "com.example.bluetooth.le.ACTION_DATA_AVAILABLE";
     public final static String EXTRA_DATA = "com.example/bluetooth.le.EXTRA_DATA";
 
+    public final static UUID UUID_HEART_RATE_MEASUREMENT = UUID.fromString(SampleGattAttributes.HEART_RATE_MEASUREMENT);
+
+
     private final BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
         @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
@@ -45,6 +51,7 @@ public class BluetoothLeService extends Service {
                 intentAction = ACTION_GATT_CONNECTED;
                 mConnectionState = STATE_CONNECTED;
                 broadcastUpdate(intentAction);
+                Log.d(TAG, "Attempting to start service discovery:" + mBluetoothGatt.discoverServices());
             }else if (newState == BluetoothProfile.STATE_DISCONNECTED){
                 intentAction = ACTION_GATT_DISCONNECTED;
                 mConnectionState = STATE_DISCONNECTED;
@@ -87,6 +94,13 @@ public class BluetoothLeService extends Service {
     private void broadcastUpdate(final String action, final BluetoothGattCharacteristic characteristic){
         final Intent intent = new Intent(action);
 
+        final byte[] data = characteristic.getValue();
+        if (data != null && data.length > 0){
+            final StringBuilder stringBuilder = new StringBuilder(data.length);
+            for (byte byteChar : data)
+                stringBuilder.append(String.format("%02X ", byteChar));
+            intent.putExtra(EXTRA_DATA, new String(data) + "\n" + stringBuilder.toString());
+        }
         sendBroadcast(intent);
     }
 
@@ -98,7 +112,7 @@ public class BluetoothLeService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        return mBinder;
     }
 
     @Override
@@ -129,7 +143,7 @@ public class BluetoothLeService extends Service {
             return false;
         }
 
-        if(mBluetoothDeviceAddress != null && address.equals(mBluetoothDeviceAddress) &&mBluetoothGatt!= null){
+        if(mBluetoothDeviceAddress != null && address.equals(mBluetoothDeviceAddress) && mBluetoothGatt!= null){
             if(mBluetoothGatt.connect()){
                 mConnectionState = STATE_CONNECTING;
                 return true;
@@ -170,6 +184,14 @@ public class BluetoothLeService extends Service {
         }
         mBluetoothGatt.readCharacteristic(characteristics);
     }
+
+    public void writeCharacteristic(BluetoothGattCharacteristic characteristics){
+        if(mBluetoothAdapter == null || mBluetoothGatt == null){
+            return;
+        }
+        mBluetoothGatt.writeCharacteristic(characteristics);
+    }
+
 
     public List<BluetoothGattService> getSupportedGattServices(){
         if(mBluetoothGatt == null) return null;
