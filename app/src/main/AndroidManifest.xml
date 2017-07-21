@@ -3,7 +3,7 @@
     package="com.example.nkwm87.bluetoothgatt">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
 
@@ -25,8 +25,9 @@
         <service
             android:name=".BluetoothLeService"
             android:enabled="true" />
+        <service android:name=".GattClient" />
 
-        <activity android:name=".DeviceControlActivity"></activity>
+        <activity android:name=".DeviceControlActivity" />
     </application>
 
 </manifest>
