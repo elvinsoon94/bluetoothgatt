@@ -6,7 +6,6 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
-import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
@@ -94,6 +93,13 @@ public class BluetoothLeService extends Service {
     private void broadcastUpdate(final String action, final BluetoothGattCharacteristic characteristic){
         final Intent intent = new Intent(action);
 
+        final byte[] data = characteristic.getValue();
+        if (data != null && data.length > 0){
+            final StringBuilder stringBuilder = new StringBuilder(data.length);
+            for (byte byteChar : data)
+                stringBuilder.append(String.format("%02X ", byteChar));
+            intent.putExtra(EXTRA_DATA, new String(data) + "\n" + stringBuilder.toString());
+        }
         sendBroadcast(intent);
     }
 
@@ -177,6 +183,14 @@ public class BluetoothLeService extends Service {
         }
         mBluetoothGatt.readCharacteristic(characteristics);
     }
+
+    public void writeCharacteristic(BluetoothGattCharacteristic characteristics){
+        if(mBluetoothAdapter == null || mBluetoothGatt == null){
+            return;
+        }
+        mBluetoothGatt.writeCharacteristic(characteristics);
+    }
+
 
 
     public List<BluetoothGattService> getSupportedGattServices(){
