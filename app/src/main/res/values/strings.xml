@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">BluetoothGATT</string>
-    <string name="scanbutton_text">Scan</string>
+    <string name="scanbutton_text">Scan for Nearby Device</string>
     <string name="stopbutton_text">Stop</string>
     <string name="unknown_device">Unknown Device</string>
     <string name="device_name">Device Name:</string>
@@ -17,4 +17,13 @@
     <string name="unknown_characteristic">Unknown Characteristic</string>
     <string name="show_text">Show</string>
     <string name="device_uptime_text">Show Device Uptime</string>
+    <string name="service_text">Services</string>
+    <string name="start_button">Start</string>
+    <string name="services_client_title">Services (Client)</string>
+    <string name="start_service_text">Start Service</string>
+    <string name="stop_service_text">Stop Service</string>
+    <string name="scan">Scan</string>
+    <string name="stop">Stop</string>
+    <string name="send_text">Send</string>
+    <string name="readButton_text">Read</string>
 </resources>
