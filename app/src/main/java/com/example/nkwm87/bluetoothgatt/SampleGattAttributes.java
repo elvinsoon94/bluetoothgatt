@@ -22,7 +22,7 @@ public class SampleGattAttributes {
         attributes.put("ff51b30e-d7e2-4d93-8842-a7c4a57dfb09", "Uptime Characteristic");
         attributes.put("ff51b30e-d7e2-4d93-8842-a7c4a57dfb10", "Load Average Characteristic");
 
-        attributes.put("00002a00-0000-1000-8000-00805f9b34fb", "Device Name");
+        attributes.put("00002a00-0000-1000-8000-00805f9b34fb", "LED 1 Switch");
         attributes.put("00002a01-0000-1000-8000-00805f9b34fb", "Device Appearance");
         attributes.put("00002a04-0000-1000-8000-00805f9b34fb", "Device Preferred Peripheral Connection");
         attributes.put("00002a08-0000-1000-8000-00805f9b34fb", "Device Data Transfer");
