@@ -2,6 +2,8 @@ package com.example.nkwm87.bluetoothgatt;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.NotificationManager;
+import android.app.Service;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanResult;
@@ -37,8 +39,11 @@ public class MainActivity extends AppCompatActivity {
 
     private Handler mHandler;
     private static final long SCAN_PERIOD = 10000;
+    private static int NOTIFICATION_ID = 0;
 
     private static final int REQUEST_ENABLE_BT = 1;
+    private Button StartButton;
+    private Button StopButton;
     BluetoothLeService mBluetoothLeService;
     String TAG = "BluetoothActivity";
     BluetoothAdapter mBluetoothAdapter ;
@@ -67,10 +72,11 @@ public class MainActivity extends AppCompatActivity {
         getBluetoothAndLeScanner();
 
         if (mBluetoothAdapter == null) {
-            Toast.makeText(this, "Bluetooth Adapter is not Available", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, "Bluetooth Adapter is not Available", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
+
         Button ScanButton = (Button)findViewById(R.id.ScanButton);
         ScanButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -82,20 +88,48 @@ public class MainActivity extends AppCompatActivity {
 
         BLEListView = (ListView) findViewById(devicename_list);
         listBluetoothDevice = new ArrayList<>();
-        adapterScanResult = new ArrayAdapter<BluetoothDevice>(this, android.R.layout.simple_list_item_1, listBluetoothDevice);
+        adapterScanResult = new ArrayAdapter<BluetoothDevice>(MainActivity.this, android.R.layout.simple_list_item_1, listBluetoothDevice);
         BLEListView.setAdapter((adapterScanResult));
         BLEListView.setOnItemClickListener(scanDeviceOnItemClickListener);
 
         mHandler = new Handler();
 
+
+        Button StartButton = (Button)findViewById(R.id.startbutton);
         Button StopButton = (Button)findViewById(R.id.StopButton);
+
+        StartButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //getBluetoothAndLeScanner();
+                Log.d(TAG, "Becoming Client and Start Advertising");
+                //startLeScan(false);
+                /*BluetoothManager bluetoothManager = (BluetoothManager) MainActivity.this.getApplicationContext().getSystemService(Context.BLUETOOTH_SERVICE);
+                BluetoothAdapter bluetoothAdapter = bluetoothManager.getAdapter();
+                if(!bluetoothAdapter.isEnabled()){
+                    Intent enableBT = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                    MainActivity.this.startActivityForResult(enableBT, REQUEST_ENABLE_BT);
+                }*/
+                start();
+            }
+        });
+
+
         StopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "User Stop the Scanning Process");
-                startLeScan(false);
+                Log.d(TAG, "Stop Advertising Process");
+                //startLeScan(false);
+                stopService(new Intent(MainActivity.this, GattClient.class));
+                cancelNotification();
             }
         });
+    }
+
+    /** The advertise process can be run but dunno why the MAC address of the advertised device keep changing **/
+    private void start(){
+        startService(new Intent(this, GattClient.class));
+        finish();
     }
 
     @Override
@@ -134,6 +168,7 @@ public class MainActivity extends AppCompatActivity {
             mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
+                    Toast.makeText(MainActivity.this, "Scanning Time Out", Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "Scanning Process Timeout");
                     mBluetoothLeScanner.stopScan(mLeScanCallBack);
                     BLEListView.invalidateViews();
@@ -213,5 +248,11 @@ public class MainActivity extends AppCompatActivity {
             }).show();
         }
     };
+
+    private void cancelNotification() {
+        final NotificationManager cancel = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+        cancel.cancel(NOTIFICATION_ID);
+        NOTIFICATION_ID++;
+    }
 
 }

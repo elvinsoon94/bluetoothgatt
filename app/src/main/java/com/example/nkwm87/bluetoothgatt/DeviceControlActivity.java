@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.IBinder;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,21 +17,17 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.UUID;
 
 
 public class DeviceControlActivity extends AppCompatActivity {
-    private final static String TAG = "Bluetooth Activity";
+    private final static String TAG = "BluetoothActivity";
 
     public static final String EXTRAS_DEVICE_NAME = "DEVICE_NAME";
     public static final String EXTRAS_DEVICE_ADDRESS = "DEVICE_ADDRESS";
@@ -44,6 +41,9 @@ public class DeviceControlActivity extends AppCompatActivity {
     private String mDeviceName;
     private String mDeviceAddress;
     private boolean mConnected = false;
+    private ConstraintLayout messageContainer;
+    private BluetoothGattCharacteristic mNotifyCharacteristic;
+    private int writeMessage = 0;
 
     byte[] info_Data = null;
 
@@ -85,28 +85,83 @@ public class DeviceControlActivity extends AppCompatActivity {
                 invalidateOptionsMenu();
                 clearUI();
             }else if(BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)){
-                //displayGattServices(mBluetoothLeService.getSupportedGattServices());
+                displayGattServices(mBluetoothLeService.getSupportedGattServices());
             }else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)){
-                //DisplayData(intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
+                DisplayData(intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
             }
 
         }
     };
 
-    /*private final ExpandableListView.OnChildClickListener servicesListClickListener = new ExpandableListView.OnChildClickListener() {
+    private final ExpandableListView.OnChildClickListener servicesListClickListener = new ExpandableListView.OnChildClickListener() {
+
+        // 2=read 8=write 10=read and write
+
         @Override
         public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
             if(mGattCharacteristics != null){
                 final BluetoothGattCharacteristic characteristic = mGattCharacteristics.get(groupPosition).get(childPosition);
                 final int charaProp = characteristic.getProperties();
-                if ((charaProp | BluetoothGattCharacteristic.PERMISSION_READ) > 0 ){
+
+                if (charaProp < 5 ){
+                    if(writeMessage==1) {
+                        messageContainer.setVisibility(View.INVISIBLE);
+                    }
+                    Log.d(TAG,"Permission to read");
                     mBluetoothLeService.readCharacteristic(characteristic);
+                    writeMessage = 0;
+                }
+
+                else if (charaProp < 9){
+                    Log.d(TAG,"Permission to write");
+                    messageContainer = (ConstraintLayout)findViewById(R.id.message_container);
+                    messageContainer.setVisibility(View.VISIBLE);
+                    writeMessage = 1;
+                    Button sendData = (Button)findViewById(R.id.sendButton);
+                    sendData.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            final TextView message = (TextView)findViewById(R.id.dataMessage);
+                            characteristic.setValue(message.getText().toString().getBytes());
+                            Log.d(TAG, "The apps is writing the characteristics");
+                            mBluetoothLeService.writeCharacteristic(characteristic);
+                            message.setText("");
+                            Log.d(TAG, "New Data is Written:" +characteristic);
+                        }
+                    });
+                }
+
+                else if (charaProp > 9){
+                    Log.d(TAG,"Permission to read and write");
+
+                    messageContainer = (ConstraintLayout)findViewById(R.id.message_container);
+                    messageContainer.setVisibility(View.VISIBLE);
+                    writeMessage = 1;
+                    Button sendData = (Button)findViewById(R.id.sendButton);
+                    sendData.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            final TextView message = (TextView)findViewById(R.id.dataMessage);
+                            characteristic.setValue(message.getText().toString().getBytes());
+                            Log.d(TAG, "The apps is writing the characteristics");
+                            mBluetoothLeService.writeCharacteristic(characteristic);
+                            message.setText("");
+                        }
+                    });
+
+                    Button readData = (Button)findViewById(R.id.readButton);
+                    readData.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            mBluetoothLeService.readCharacteristic(characteristic);
+                        }
+                    });
                 }
                 return true;
             }
             return false;
         }
-    };*/
+    };
 
     private void updateConnectionState(final int resourceId) {
         runOnUiThread(new Runnable() {
@@ -139,32 +194,14 @@ public class DeviceControlActivity extends AppCompatActivity {
         mConnectionState = (TextView)findViewById(R.id.device_status);
         mDataField = (TextView)findViewById(R.id.device_data);
 
-        //mGattServicesList = (ExpandableListView)findViewById(R.id.gatt_service_list);
-        //mGattServicesList.setOnChildClickListener(servicesListClickListener);
 
-        Button showUpTimeButton = (Button)findViewById(R.id.showUptimeButton);
-        showUpTimeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                displayDeviceUpTimeInfo();
-            }
-        });
+        mGattServicesList = (ExpandableListView)findViewById(R.id.gatt_service_list);
+        mGattServicesList.setOnChildClickListener(servicesListClickListener);
+
         Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
         bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
     }
 
-    private void displayDeviceUpTimeInfo() {
-        List<BluetoothGattService> list = mBluetoothLeService.getSupportedGattServices();
-        BluetoothGattService service = list.get(2);
-        BluetoothGattCharacteristic info = service.getCharacteristic(UUID.fromString("ff51b30e-d7e2-4d93-8842-a7c4a57dfb08"));
-        mBluetoothLeService.readCharacteristic(info);
-        byte[] infoValue = info.getValue();
-        if(infoValue != null){
-            info_Data = infoValue;
-            String data1 = new String(info_Data);
-            mDataField.setText(data1);
-        }
-    }
 
     @Override
     protected void onResume(){
