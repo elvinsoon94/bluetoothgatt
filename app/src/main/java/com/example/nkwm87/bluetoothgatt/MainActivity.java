@@ -66,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "Started.");
         setContentView(R.layout.activity_main);
 
+        /** Checking the device supporting BLE or not **/
         if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
             Toast.makeText(this, "BLUETOOTH_LE not supported in this device!", Toast.LENGTH_SHORT).show();
             finish();
@@ -88,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        /** Putting the detected device in an array list and display it **/
         BLEListView = (ListView) findViewById(devicename_list);
         listBluetoothDevice = new ArrayList<>();
         adapterScanResult = new ArrayAdapter<BluetoothDevice>(MainActivity.this, android.R.layout.simple_list_item_1, listBluetoothDevice);
@@ -119,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    /** The advertise process can be run but dunno why the MAC address of the advertised device keep changing **/
+    /** The advertise process **/
     private void start(){
         startService(new Intent(this, GattClient.class));
         finish();
@@ -129,6 +131,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
+        /** Ask the user to enable Bluetooth if it is not being enabled **/
         if (!mBluetoothAdapter.isEnabled()) {
             if (!mBluetoothAdapter.isEnabled()) {
                 Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
@@ -137,6 +140,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /** If the Bluetooth is not enabled by the user the application will closed **/
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == REQUEST_ENABLE_BT && resultCode == Activity.RESULT_CANCELED){
@@ -147,6 +151,7 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    /** Obtain the Bluetooth Adapter and Scanner **/
     private void getBluetoothAndLeScanner(){
         final BluetoothManager bluetoothManager = (BluetoothManager)getSystemService(Context.BLUETOOTH_SERVICE);
         mBluetoothAdapter = bluetoothManager.getAdapter();
@@ -162,7 +167,6 @@ public class MainActivity extends AppCompatActivity {
             mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(MainActivity.this, "Scanning Time Out", Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "Scanning Process Timeout");
                     refreshbar.setVisibility(View.INVISIBLE);
                     mBluetoothLeScanner.stopScan(mLeScanCallBack);
@@ -170,15 +174,15 @@ public class MainActivity extends AppCompatActivity {
                 }
             }, SCAN_PERIOD);
 
-            mBluetoothLeScanner.startScan(mLeScanCallBack);
+            mBluetoothLeScanner.startScan(mLeScanCallBack); //Scanning process started and will last for 10 seconds
             Log.d(TAG, "Scanning in Progree");
-            refreshbar.setVisibility(View.VISIBLE);
+            refreshbar.setVisibility(View.VISIBLE); //refresh bar as the indicator for the scanning process
         }else{
             mBluetoothLeScanner.stopScan(mLeScanCallBack);
         }
     }
 
-
+    /** ScanCallBack for the Scanning result from the process **/
     private ScanCallback mLeScanCallBack = new ScanCallback() {
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
@@ -207,21 +211,6 @@ public class MainActivity extends AppCompatActivity {
             }
 
         }
-
-        private void addDeviceName (BluetoothDevice device){
-            if (!listBluetoothDevice.contains(device)) {
-                Log.d(TAG, "Displaying the Device Name");
-                String deviceName = device.getName();
-                if (deviceName != null) {
-                    DeviceName.add(deviceName);
-                    Log.d(TAG, "Device Name is " + deviceName);
-                } else {
-                    deviceName = "Unknown Device";
-                    DeviceName.add(deviceName);
-                }
-                BLENameListView.invalidateViews();
-            }
-        }
     };
 
     AdapterView.OnItemClickListener scanDeviceOnItemClickListener = new AdapterView.OnItemClickListener(){
@@ -232,13 +221,14 @@ public class MainActivity extends AppCompatActivity {
             final BluetoothDevice device = (BluetoothDevice) parent.getItemAtPosition(position);
 
             String message = "Device Name: "+ device.getName() + "\nMAC Address: " + device.getAddress();
-            new AlertDialog.Builder(MainActivity.this).setTitle("Established Connection").setMessage(message).setPositiveButton("Connect", new DialogInterface.OnClickListener(){
+            new AlertDialog.Builder(MainActivity.this).setTitle("Established Connection")
+                    .setMessage(message).setPositiveButton("Connect", new DialogInterface.OnClickListener(){
                 @Override
                 public void onClick(DialogInterface dialog, int which){
                     final Intent intent = new Intent(MainActivity.this, DeviceControlActivity.class);
                     intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_NAME, device.getName());
                     intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS, device.getAddress());
-                    startActivity(intent);
+                    startActivity(intent);  //will be directed to DeviceControlActivity together with the device name and MAC address
                     Log.d(TAG, "Connecting to " + device.getName());
                 }
             }).show();

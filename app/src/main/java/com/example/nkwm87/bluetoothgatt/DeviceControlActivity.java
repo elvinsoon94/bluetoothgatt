@@ -26,7 +26,6 @@ import android.widget.ToggleButton;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 
 
 public class DeviceControlActivity extends AppCompatActivity {
@@ -45,10 +44,6 @@ public class DeviceControlActivity extends AppCompatActivity {
     private boolean mConnected = false;
     private ConstraintLayout messageContainer;
     private ConstraintLayout mLedSwitch;
-    private int writeMessage = 0;
-    private int ledSwitch = 0;
-    private int ledon = 0;
-    private int ledoff = 0;
     private ToggleButton LEDswitch;
 
     byte[] info_Data = null;
@@ -58,6 +53,7 @@ public class DeviceControlActivity extends AppCompatActivity {
 
     private final ServiceConnection mServiceConnection = new ServiceConnection(){
 
+        /** Connect to the Selected Device **/
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             mBluetoothLeService = ((BluetoothLeService.LocalBinder) service).getService();
@@ -77,6 +73,7 @@ public class DeviceControlActivity extends AppCompatActivity {
         }
     };
 
+    /** Display the Connection Status and Data**/
     private final BroadcastReceiver mGattUpdateReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -91,9 +88,9 @@ public class DeviceControlActivity extends AppCompatActivity {
                 invalidateOptionsMenu();
                 clearUI();
             }else if(BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)){
-                displayGattServices(mBluetoothLeService.getSupportedGattServices());
+                displayGattServices(mBluetoothLeService.getSupportedGattServices());    //display the available services
             }else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)){
-                DisplayData(intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
+                DisplayData(intent.getStringExtra(BluetoothLeService.EXTRA_DATA));  //display any available data
             }
 
         }
@@ -108,144 +105,85 @@ public class DeviceControlActivity extends AppCompatActivity {
             if(mGattCharacteristics != null){
                 final boolean switchIson = true;
                 final BluetoothGattCharacteristic characteristic = mGattCharacteristics.get(groupPosition).get(childPosition);
-                final int charaProp = characteristic.getProperties();
-                final String ledUUID = characteristic.getUuid().toString();
+                final int charaProp = characteristic.getProperties();   //obtaining the value of the properties of characteristics
+                final String ledUUID = characteristic.getUuid().toString(); //Getting the UUID of the selected characteristics in term of string
                 Log.d(TAG, "The UUID detected is:" +ledUUID);
 
-                if (ledUUID.equals("00002a00-0000-1000-8000-00805f9b34fb")){
-                    Log.d(TAG, "Selection of the Service");
+                messageContainer = (ConstraintLayout)findViewById(R.id.message_container);  //layout for user to input data and read data
+                mLedSwitch = (ConstraintLayout)findViewById(R.id.LED_Switch);   //layout for controlling the LED
 
-                    if(writeMessage==1) {
+                /** The LED control service is selected**/
+                if (ledUUID.equals("00002a00-0000-1000-8000-00805f9b34fb")){
+
+                    /** Turn off the writing layout if the layout is visible (WRITE / READ&WRITE Properties is selected before)**/
+                    if (messageContainer.getVisibility() == View.VISIBLE) {
                         messageContainer.setVisibility(View.INVISIBLE);
                     }
-                    if(ledSwitch==1){
-                        mLedSwitch.setVisibility(View.INVISIBLE);
+                    Log.d(TAG, "LED Switch Service is Chosen");
+
+                    mLedSwitch.setVisibility(View.VISIBLE);
+
+                    ToggleButton LEDswitch = (ToggleButton)findViewById(R.id.LEDSwitchButton);
+                    mBluetoothLeService.readCharacteristic(characteristic);
+
+                    /** Checking the condition of the LED before adding additional command **/
+                    String status;
+                    byte[] LEDdata = characteristic.getValue();
+
+                    if (LEDdata != null && LEDdata.length > 0){
+                        final StringBuilder stringBuilder = new StringBuilder(LEDdata.length);
+                        for (byte byteChar : LEDdata)
+                            stringBuilder.append(String.format("%02X", byteChar));
+                        status = stringBuilder.toString();
+                        String printstatus = convertHexToString(status);
+                        Log.d(TAG, "The status of the LED is**" +printstatus);
+
+                        if(printstatus.equals("ON")){
+                            Log.d(TAG, "The LED is already turned on");
+                            LEDswitch.setChecked(switchIson);
+                        }
                     }
 
-                    /*final ConstraintLayout mSelection = (ConstraintLayout)findViewById(R.id.functionSelectionLayout);
-                    mSelection.setVisibility(View.VISIBLE);
-
-                    Button mGPSButton = (Button)findViewById(R.id.gpsSelection);
-                    mGPSButton.setOnClickListener(new View.OnClickListener() {
+                    /** Toggle button for the LED ON OFF switch **/
+                    LEDswitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                         @Override
-                        public void onClick(View v) {
-                            mSelection.setVisibility(View.INVISIBLE);
-                            Log.d(TAG, "GPS service is chosen");
-                            if(ledSwitch==1){
-                                mLedSwitch.setVisibility(View.INVISIBLE);
-                            }
-
-                            messageContainer = (ConstraintLayout)findViewById(R.id.message_container);
-                            messageContainer.setVisibility(View.VISIBLE);
-                            writeMessage = 1;
-                            Button sendData = (Button)findViewById(R.id.sendButton);
-                            sendData.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    final TextView message = (TextView)findViewById(R.id.dataMessage);
-                                    characteristic.setValue(message.getText().toString().getBytes());
-                                    Log.d(TAG, "The apps is writing the characteristics");
-                                    mBluetoothLeService.writeCharacteristic(characteristic);
-                                    message.setText("");
-                                    Log.d(TAG, "New Data is Written:" +characteristic);
-                                }
-                            });
-                        }
-                    });*/
-
-                    //Button mLEDButton = (Button)findViewById(R.id.ledSelection);
-                    //mLEDButton.setOnClickListener(new View.OnClickListener() {
-                        //@Override
-                        //public void onClick(View v) {
-                            //mSelection.setVisibility(View.INVISIBLE);
-                            Log.d(TAG, "LED Switch Service is Chosen");
-                            /*if(writeMessage==1) {
-                                messageContainer.setVisibility(View.INVISIBLE);
-                            }
-
-                            if (ledon==1 && ledoff==0){
+                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                            if (isChecked){
+                                Log.d(TAG, "LED is turned on");
                                 characteristic.setValue("ON");
                                 mBluetoothLeService.writeCharacteristic(characteristic);
-                            }
-                            if (ledoff==1 && ledon==0){
+                            }else{
+                                Log.d(TAG, "LED is turned off");
                                 characteristic.setValue("OFF");
                                 mBluetoothLeService.writeCharacteristic(characteristic);
-                            }*/
-
-                            mLedSwitch = (ConstraintLayout)findViewById(R.id.LED_Switch);
-                            mLedSwitch.setVisibility(View.VISIBLE);
-
-                            ledSwitch = 1;
-
-                            ToggleButton LEDswitch = (ToggleButton)findViewById(R.id.LEDSwitchButton);
-                            mBluetoothLeService.readCharacteristic(characteristic);
-
-                            /** Checking the condition of the LED before adding additional command **/
-                            String status;
-                            byte[] LEDdata = characteristic.getValue();
-
-                            if (LEDdata != null && LEDdata.length > 0){
-                                final StringBuilder stringBuilder = new StringBuilder(LEDdata.length);
-                                for (byte byteChar : LEDdata)
-                                    stringBuilder.append(String.format("%02X", byteChar));
-                                status = stringBuilder.toString();
-                                String printstatus = convertHexToString(status);
-                                Log.d(TAG, "The status of the LED is**" +printstatus);
-
-                                if(printstatus.equals("ON")){
-                                    Log.d(TAG, "The LED is already turned on");
-                                    LEDswitch.setChecked(switchIson);
-                                }
                             }
-
-                            LEDswitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                                @Override
-                                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                                    if (isChecked){
-                                        Log.d(TAG, "LED is turned on");
-                                        characteristic.setValue("ON");
-                                        mBluetoothLeService.writeCharacteristic(characteristic);
-                                        ledon = 1;
-                                        ledoff = 0;
-                                    }else{
-                                        Log.d(TAG, "LED is turned off");
-                                        characteristic.setValue("OFF");
-                                        mBluetoothLeService.writeCharacteristic(characteristic);
-                                        ledon = 0;
-                                        ledoff = 1;
-                                    }
-                                }
-                            });
-
-                        //}
-                    //});
+                        }
+                    });
 
                 }else{
 
-                /** Checking the properties value of the characteristics **/
+                /** Checking the properties of the characteristics **/
 
-                if (charaProp < 5 ){
-                    if(writeMessage==1) {
+                if (charaProp < 5 ){    //this is READ properties (value is 2)
+                    if (messageContainer.getVisibility() == View.VISIBLE){
                         messageContainer.setVisibility(View.INVISIBLE);
                     }
-                    else if(ledSwitch==1){
+
+                    if (mLedSwitch.getVisibility() == View.VISIBLE){
                         mLedSwitch.setVisibility(View.INVISIBLE);
                     }
 
                     Log.d(TAG,"Permission to read");
                     mBluetoothLeService.readCharacteristic(characteristic);
-                    writeMessage = 0;
                 }
 
-                else if (charaProp < 9){
-                    if(ledSwitch==1){
+                else if (charaProp < 9){    //this is WRITE properties (value is 8)
+                    if (mLedSwitch.getVisibility() == View.VISIBLE){
                         mLedSwitch.setVisibility(View.INVISIBLE);
                     }
-                    Log.d(TAG,"Permission to write");
 
-                    messageContainer = (ConstraintLayout)findViewById(R.id.message_container);
+                    Log.d(TAG,"Permission to write");
                     messageContainer.setVisibility(View.VISIBLE);
-                    writeMessage = 1;
                     Button sendData = (Button)findViewById(R.id.sendButton);
                     sendData.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -260,18 +198,15 @@ public class DeviceControlActivity extends AppCompatActivity {
                     });
                 }
 
-                else if (charaProp > 9){
-                    if(ledSwitch==1){
-                        Log.d(TAG, "LED Switch layout is turned off");
+                else if (charaProp > 9){    //this is READ&WRITE properties (value is 10)
+                    if (mLedSwitch.getVisibility() == View.VISIBLE){
                         mLedSwitch.setVisibility(View.INVISIBLE);
                     }
+
                     Log.d(TAG,"Permission to read and write");
 
-
-                    messageContainer = (ConstraintLayout)findViewById(R.id.message_container);
                     messageContainer.setVisibility(View.VISIBLE);
-                    writeMessage = 1;
-                    Button sendData = (Button)findViewById(R.id.sendButton);
+                    Button sendData = (Button)findViewById(R.id.sendButton);    //write data into the characteristics
                     sendData.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -283,7 +218,7 @@ public class DeviceControlActivity extends AppCompatActivity {
                         }
                     });
 
-                    Button readData = (Button)findViewById(R.id.readButton);
+                    Button readData = (Button)findViewById(R.id.readButton);    //read date from the characteristics
                     readData.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -297,6 +232,7 @@ public class DeviceControlActivity extends AppCompatActivity {
         }
     };
 
+    /**Update the Connection Status of the Device**/
     private void updateConnectionState(final int resourceId) {
         runOnUiThread(new Runnable() {
             @Override
@@ -306,15 +242,12 @@ public class DeviceControlActivity extends AppCompatActivity {
         });
     }
 
+    /**Clear up the data field if the device is disconnected**/
     private void clearUI(){
         mGattServicesList.setAdapter((SimpleExpandableListAdapter) null);
         mDataField.setText(R.string.no_data);
-        if(writeMessage == 1){
-            messageContainer.setVisibility(View.INVISIBLE);
-        }
-        if(ledSwitch == 1){
-            mLedSwitch.setVisibility(View.INVISIBLE);
-        }
+        messageContainer.setVisibility(View.INVISIBLE);
+        mLedSwitch.setVisibility(View.INVISIBLE);
 
     }
 
@@ -324,6 +257,8 @@ public class DeviceControlActivity extends AppCompatActivity {
         setContentView(R.layout.activity_device_control);
         Log.d(TAG, "Displaying the Device information");
         final Intent intent = getIntent();
+
+        /** Displaying the Information of the Connected Device **/
         mDeviceName = intent.getStringExtra(EXTRAS_DEVICE_NAME);
         mDeviceAddress = intent.getStringExtra(EXTRAS_DEVICE_ADDRESS);
 
@@ -367,6 +302,7 @@ public class DeviceControlActivity extends AppCompatActivity {
         mBluetoothLeService = null;
     }
 
+    /** Option Menu to Connect and Disconnect from the Device inside the UI**/
     @Override
     public boolean onCreateOptionsMenu (Menu menu){
         getMenuInflater().inflate(R.menu.gatt_services, menu);
@@ -399,6 +335,7 @@ public class DeviceControlActivity extends AppCompatActivity {
         }
     }
 
+    /** Display the available services detected from the connected device **/
     private void displayGattServices(List<BluetoothGattService> gattServices){
         if(gattServices == null) return;
         String uuid = null;
@@ -449,6 +386,7 @@ public class DeviceControlActivity extends AppCompatActivity {
         return intentFilter;
     }
 
+    /** Convert the value of the LED to string to check the condition **/
     public String convertHexToString(String hex){
         StringBuffer sb = new StringBuffer();
         StringBuilder temp = new StringBuilder();

@@ -9,19 +9,20 @@ public class SampleGattAttributes {
     public static String CLIENT_CHARACTERISTIC_CONFIG = "00002902-0000-1000-8000-00805f9b34fb";
 
     static {
-        // Sample Services
+        // Assign each services available with their own descriptions
         attributes.put("0000180d-0000-1000-8000-00805f9b34fb", "Heart Rate Service");
         attributes.put("0000180a-0000-1000-8000-00805f9b34fb", "Device Information Service");
         attributes.put("ff51b30e-d7e2-4d93-8842-a7c4a57dfb07", "Device Primary Service");
         attributes.put("00001800-0000-1000-8000-00805f9b34fb", "Generic Attribute Profile");
 
-        // Sample Characteristics
+        // Assign each characteristics available with their own descriptions
         attributes.put(HEART_RATE_MEASUREMENT, "Heart Rate Measurement");
         attributes.put("00002a29-0000-1000-8000-00805f9b34fb", "Manufacturer Name String");
         attributes.put("ff51b30e-d7e2-4d93-8842-a7c4a57dfb08", "Input Characteristic");
         attributes.put("ff51b30e-d7e2-4d93-8842-a7c4a57dfb09", "Uptime Characteristic");
         attributes.put("ff51b30e-d7e2-4d93-8842-a7c4a57dfb10", "Load Average Characteristic");
 
+        //characteristics and UUID gotten from the EVB board
         attributes.put("00002a00-0000-1000-8000-00805f9b34fb", "LED 1 Switch");
         attributes.put("00002a01-0000-1000-8000-00805f9b34fb", "Device Appearance");
         attributes.put("00002a04-0000-1000-8000-00805f9b34fb", "Device Preferred Peripheral Connection");
